@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firmenfahrzeuge</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Meta-Tags für UTF-8, mobiles Layout und die Anbindung des CSS-Stylesheets -->
+</head>
+<body>
+    <header>
+        <h1>Firmenfahrzeugverwaltung</h1>
+        <p>Dashboard für Fahrzeuge, Termine und Kennzahlen</p>
+    </header>
+
+    <main>
+        <!-- Platzhalter für KPIs/Kennzahlen, wird komplett via JS befüllt -->
+        <section class="analysis" id="analysis"></section>
+
+        <!-- Live-Suche und Filterleiste für die spätere Tabellensteuerung -->
+        <section class="controls">
+            <input type="search" id="searchInput" placeholder="Fahrzeug suchen">
+            <select id="fuelFilter">
+                <option value="">Alle Kraftstoffarten</option>
+            </select>
+        </section>
+
+        <!-- Ranking-Modul: Ermöglicht das Sortieren nach Werten (z.B. Verbrauch) und Filtern nach Antriebsart -->
+        <section class="ranking-area">
+            <h2>Ranking</h2>
+            <div class="ranking-controls">
+                <label>Rankingart
+                    <select id="rankingType">
+                        <option value="consumption">Verbrauch</option>
+                        <option value="mileage">Kilometerstand</option>
+                        <option value="monthlyMileage">Monatliche Kilometer</option>
+                        <option value="power">Leistung</option>
+                    </select>
+                </label>
+
+                <label>Reihenfolge
+                    <select id="rankingDirection">
+                        <option value="desc">Fallend</option>
+                        <option value="asc">Steigend</option>
+                    </select>
+                </label>
+
+                <label>Antrieb/Kraftstoff
+                    <select id="rankingFuelFilter">
+                        <option value="fuel">Benzin/Diesel/Hybrid</option>
+                        <option value="Elektro">Elektro</option>
+                        <option value="">Alle Kraftstoffarten</option>
+                    </select>
+                </label>
+            </div>
+            <!-- Geordnete Liste (<ol>), die dynamisch mit den Top-Fahrzeugen befüllt wird -->
+            <ol class="ranking-list" id="rankingList"></ol>
+        </section>
+
+        <section class="content">
+            <!-- Tabelle für die eigentliche Fahrzeugübersicht; Reihen (<tr>) werden dynamisch per JS in <tbody> gerendert -->
+            <div class="table-area">
+                <h2>Fahrzeuge</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Marke</th>
+                                <th>Modell</th>
+                                <th>Kennzeichen</th>
+                                <th>Baujahr</th>
+                                <th>km</th>
+                                <th>Kraftstoff</th>
+                                <th>Verbrauch</th>
+                                <th>Leistung</th>
+                                <th>Zugeordnet</th>
+                                <th>Pool</th>
+                                <th>Service</th>
+                                <th>Pickerl</th>
+                                <th>Aktionen</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vehicleTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- CRUD-Formular: Dient zum Erstellen UND Bearbeiten von Fahrzeugen -->
+            <form id="vehicleForm">
+                <h2 id="formTitle">Fahrzeug hinzufügen</h2>
+                
+                <!-- Hidden Input speichert die Fahrzeug-ID beim Bearbeiten. Wenn leer = Neues Fahrzeug -->
+                <input type="hidden" id="vehicleId">
+
+                <label>Marke
+                    <input id="brand" required>
+                </label>
+
+                <label>Modell
+                    <input id="model" required>
+                </label>
+
+                <label>Kennzeichen
+                    <input id="licensePlate" required>
+                </label>
+
+                <label>Baujahr
+                    <input id="year" type="number" min="1900">
+                </label>
+
+                <label>Laufleistung
+                    <input id="mileage" type="number" min="0">
+                </label>
+
+                <label>Kraftstoffart
+                    <select id="fuelType">
+                        <option value="Benzin">Benzin</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="Elektro">Elektro</option>
+                        <option value="Hybrid">Hybrid</option>
+                    </select>
+                </label>
+
+                <label>Verbrauch
+                    <input id="consumption" type="number" min="0" step="0.1">
+                </label>
+
+                <label>Leistung in kW
+                    <input id="power" type="number" min="0">
+                </label>
+
+                <label>Zugeordnete Person
+                    <input id="assignedUser">
+                </label>
+
+                <label class="checkbox">
+                    <input id="isPoolVehicle" type="checkbox">
+                    Poolfahrzeug
+                </label>
+
+                <label>Nächster Service
+                    <input id="nextServiceDate" type="date">
+                </label>
+
+                <!-- Spezifische Pickerl-Felder (§57a / TÜV) getrennt nach Monat und Jahr -->
+                <div class="pickerl-fields">
+                    <label>Pickerl Monat
+                        <select id="nextInspectionMonth">
+                            <option value="">Monat</option>
+                            <option value="01">01</option>
+                            <option value="02">02</option>
+                            <option value="03">03</option>
+                            <option value="04">04</option>
+                            <option value="05">05</option>
+                            <option value="06">06</option>
+                            <option value="07">07</option>
+                            <option value="08">08</option>
+                            <option value="09">09</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select>
+                    </label>
+
+                    <label>Pickerl Jahr
+                        <input id="nextInspectionYear" type="number" min="2000">
+                    </label>
+                </div>
+
+                <label>Notizen
+                    <textarea id="notes" rows="3"></textarea>
+                </label>
+
+                <div class="form-actions">
+                    <button type="submit">Speichern</button>
+                    <button type="button" id="cancelEditButton">Abbrechen</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Historien-Bereich: Zuordnung von Ereignissen (Reparatur, Service) zu ausgewählten Fahrzeugen -->
+        <section class="history-area">
+            <h2>Historie</h2>
+            <p id="historySelectionText">Mindestens ein Fahrzeug auswählen.</p>
+
+            <div class="history-layout">
+                <!-- Multi-Select zur Mehrfachauswahl von Fahrzeugen für ein Ereignis -->
+                <div>
+                    <h3>Fahrzeuge auswählen</h3>
+                    <select id="historyVehicleSelect" multiple size="5"></select>
+                </div>
+
+                <form id="historyForm">
+                    <label>Art
+                        <select id="historyType">
+                            <option value="Service">Service</option>
+                            <option value="Überprüfung">Überprüfung</option>
+                            <option value="Pickerl">Pickerltermin</option>
+                            <option value="Reparatur">Reparatur</option>
+                        </select>
+                    </label>
+
+                    <label>Datum
+                        <input id="historyDate" type="date" required>
+                    </label>
+
+                    <label class="history-text">Eintrag
+                        <textarea id="historyText" rows="4" required></textarea>
+                    </label>
+
+                    <button type="submit">Eintrag speichern</button>
+                </form>
+            </div>
+
+            <!-- Liste gerenderter Historieneinträge -->
+            <div id="historyList"></div>
+        </section>
+    </main>
+
+    <!-- Einbindung der Anwendungslogik ganz unten, damit das DOM beim Skriptstart bereits geladen ist -->
+    <script src="script.js"></script>
+</body>
+</html>
