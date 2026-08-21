@@ -1,52 +1,80 @@
 # Firmenfahrzeugverwaltung
 
-Einfache Webanwendung für ein webbasiertes Firmenfahrzeugverwaltungssystem.
+Das ist eine einfache Webanwendung für die Verwaltung von Firmenfahrzeugen. Man kann Fahrzeuge erfassen, bearbeiten, löschen, filtern und zusätzliche Historieneinträge wie Service, Pickerl oder Reparaturen speichern.
 
-## Start
+## Lokal starten
+
+Zuerst die Abhängigkeiten installieren:
 
 ```bash
 npm install
+```
+
+Danach die Anwendung starten:
+
+```bash
 npm run dev
 ```
 
-Danach im Browser öffnen:
+Dann im Browser öffnen:
 
 ```text
 http://localhost:3000
 ```
 
-Fuer Hosting auf Render, Railway oder Azure App Service kann als Startbefehl verwendet werden:
+Alternativ kann auch dieser Befehl verwendet werden:
 
 ```bash
 npm start
 ```
 
+## Online-Version
+
+Die Anwendung wurde für die Abgabe online auf Render gehostet:
+
+```text
+https://firmenfahrzeuge.onrender.com
+```
+
+Render wurde verwendet, weil Azure App Service mit dem Student-Account durch eine Azure-Policy blockiert wurde. 
+Wichtig: Der kostenlose Render-Plan kann die Anwendung nach einiger Zeit ohne Besucher schlafen legen. Beim ersten Öffnen kann das Laden deshalb kurz dauern. Für die Präsentation sollte die Seite ein paar Minuten vorher geöffnet und getestet werden.
+
+Für das Hosting auf Render wurden diese Einstellungen verwendet:
+
+- Repository: GitHub-Repository `48mert/Firmenfahrzeuge`
+- Runtime/Language: Node
+- Branch: `main`
+- Build Command: `npm install`
+- Start Command: `npm start` oder `node app.js`
+
 ## Dateien
 
-- `app.js`: Express-Server, SQLite-Verbindung, Sequelize-Modell, REST-Endpunkte, Analyse-Endpunkt und Startdaten.
-- `public/index.html`: Dashboard, Tabelle, Suchfeld, Filter, Formular und Fahrzeughistorie.
-- `public/style.css`: Einfaches responsive Dashboard-Design.
-- `public/script.js`: Laden, Anzeigen, Suchen, Filtern, Erstellen, Bearbeiten, Löschen, Historie und Analyseanzeige.
-- `package.json`: Projektinformationen, Startskripte und notwendige Abhängigkeiten.
+- `app.js`: Hier stehen der Express-Server, die SQLite-Verbindung, das Sequelize-Modell, die REST-Endpunkte, der Analyse-Endpunkt und die Startdaten.
+- `public/index.html`: Hier ist die Grundstruktur der Webseite mit Dashboard, Tabelle, Suchfeld, Filter, Formular und Fahrzeughistorie.
+- `public/style.css`: Hier wird das einfache und responsive Dashboard-Design festgelegt.
+- `public/script.js`: Hier passiert die Logik im Browser, also Laden, Anzeigen, Suchen, Filtern, Erstellen, Bearbeiten, Löschen, Historie und Analyseanzeige.
+- `package.json`: Hier stehen Projektinformationen, Startbefehle und die notwendigen Abhängigkeiten.
 
 Die Datei `database.sqlite` wird beim Start automatisch von Sequelize erzeugt.
 
 ## Funktionen
 
-- Fahrzeuge hinzufügen, bearbeiten und löschen.
-- Kilometer, Kennzeichen, Zuordnung, Poolfahrzeug, Service und Pickerl bearbeiten.
-- Pickerl wird als Monat/Jahr gespeichert, zum Beispiel `08/2026`.
-- Services, Überprüfungen, Pickerltermine und Reparaturen als Historie beim Fahrzeug speichern.
-- Auswertungen für Verbrauch, Kilometerstand und durchschnittliche monatliche Kilometer pro Auto.
+- Fahrzeuge können hinzugefügt, bearbeitet und gelöscht werden.
+- Kilometerstand, Kennzeichen, zugeordnete Person, Poolfahrzeug, Service und Pickerl können geändert werden.
+- Das Pickerl wird als Monat/Jahr gespeichert, zum Beispiel `08/2026`.
+- Services, Überprüfungen, Pickerltermine und Reparaturen können als Historie beim Fahrzeug gespeichert werden.
+- Es gibt einfache Auswertungen für Verbrauch, Kilometerstand und durchschnittliche monatliche Kilometer pro Auto.
 
-## Team-Aufteilung
+## Zuständigkeiten
 
-Person 1 arbeitet an `public/index.html` und `public/style.css`: Gestaltung, Tabelle und Formular.
+Akram: `public/index.html` und `public/style.css`; Gestaltung, Tabelle und Formular
 
-Person 2 arbeitet an `app.js`: Express, Sequelize, Datenbankmodell und REST-Endpunkte.
+Michael: `app.js`; Express, Sequelize, Datenbankmodell und REST-Endpunkte
 
-Person 3 arbeitet an `public/script.js`, `README.md` und Testen: fetch(), Suche, Filter, Analyseanzeige und kurze Dokumentation.
+Mert: `public/script.js`, `README.md` und Testen: `fetch()`, Suche, Filter, Analyseanzeige und kurze Dokumentation
 
 ## Hinweis zu Online-Hosting
 
-Fuer die lokale FH-Demo reicht SQLite. Falls ein echter dauerhafter Node.js-Host eine externe Datenbank verlangt, kann Sequelize spaeter auf PostgreSQL umgestellt werden. Dazu wuerde man den Dialect und die Verbindungsdaten in `app.js` aendern und eine PostgreSQL-Datenbank beim Hosting-Anbieter anlegen. Die aktuelle Version bleibt bewusst einfach und verwendet SQLite.
+Für die lokale FH-Demo reicht SQLite aus. Für dauerhaftes Online-Hosting wäre SQLite aber nicht ideal, weil die Datenbank nur als Datei gespeichert wird. Wenn die App bei Render neu startet oder neu deployed wird, können gespeicherte Daten eventuell verloren gehen.
+
+Für eine echte dauerhafte Online-Version könnte Sequelize später auf PostgreSQL umgestellt werden. Dafür würde man den Dialect und die Verbindungsdaten in `app.js` ändern und beim Hosting-Anbieter eine PostgreSQL-Datenbank anlegen. Für dieses Projekt bleibt die Version bewusst einfach und verwendet SQLite.
